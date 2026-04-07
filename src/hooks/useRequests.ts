@@ -20,6 +20,7 @@ export interface AutomationRequest {
   userId:         string | null;
   createdAt:      string;
   updatedAt:      string;
+  delivery_phase?: string;
 }
 
 interface UseRequestsReturn {
@@ -43,6 +44,7 @@ function mapRow(row: Record<string, unknown>): AutomationRequest {
     userId:         row.user_id as string | null,
     createdAt:      row.created_at as string,
     updatedAt:      row.updated_at as string,
+    delivery_phase: row.delivery_phase as string | undefined,
   };
 }
 

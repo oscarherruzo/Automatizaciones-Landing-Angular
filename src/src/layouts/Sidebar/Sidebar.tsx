@@ -1,9 +1,18 @@
+/**
+ * Sidebar del panel de control.
+ * El enlace de admin solo se renderiza si el usuario tiene rol 'superadmin'.
+ * El enlace de Mis Proyectos solo aparece para clientes.
+ */
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/AuthContext';
 import { useAuth }        from '@/hooks/useAuth';
 import styles from './Sidebar.module.css';
 
-interface NavItem { path: string; label: string; role?: 'superadmin' | 'client'; }
+interface NavItem {
+  path:    string;
+  label:   string;
+  role?:   'superadmin' | 'client';
+}
 
 const NAV_ITEMS: NavItem[] = [
   { path: '/dashboard', label: 'Panel' },
@@ -19,9 +28,14 @@ export function Sidebar() {
   const { signOut } = useAuth();
   const navigate    = useNavigate();
 
-  async function handleSignOut() { await signOut(); navigate('/login', { replace: true }); }
+  async function handleSignOut() {
+    await signOut();
+    navigate('/login', { replace: true });
+  }
 
-  const visibleItems = NAV_ITEMS.filter((item) => !item.role || item.role === user?.role);
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.role || item.role === user?.role
+  );
 
   return (
     <aside className={styles.sidebar}>
@@ -29,11 +43,17 @@ export function Sidebar() {
         <span className={styles.brandName}>Oscar Herruzo</span>
         <span className={styles.brandSub}>Automatizaciones</span>
       </div>
+
       <nav className={styles.nav} aria-label="Navegacion principal">
         <ul className={styles.navList}>
           {visibleItems.map((item) => (
             <li key={item.path}>
-              <NavLink to={item.path} className={({ isActive }) => [styles.navItem, isActive ? styles.navItemActive : ''].join(' ').trim()}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  [styles.navItem, isActive ? styles.navItemActive : ''].join(' ').trim()
+                }
+              >
                 <span className={styles.navDot} aria-hidden="true" />
                 {item.label}
               </NavLink>
@@ -41,12 +61,17 @@ export function Sidebar() {
           ))}
         </ul>
       </nav>
+
       <div className={styles.footer}>
         <div className={styles.userInfo}>
-          <span className={styles.userName}>{user?.full_name ?? user?.email ?? 'Usuario'}</span>
+          <span className={styles.userName}>
+            {user?.full_name ?? user?.email ?? 'Usuario'}
+          </span>
           <span className={styles.userPlan}>{user?.plan ?? 'free'}</span>
         </div>
-        <button className={styles.signOutBtn} onClick={handleSignOut} aria-label="Cerrar sesion">Salir</button>
+        <button className={styles.signOutBtn} onClick={handleSignOut} aria-label="Cerrar sesion">
+          Salir
+        </button>
       </div>
     </aside>
   );

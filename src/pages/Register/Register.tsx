@@ -77,11 +77,10 @@ export function Register() {
       return;
     }
 
-    // Si el usuario queda con sesion activa, el AuthContext lo detectara
-    // y el Navigate de arriba redirigira al dashboard.
-    // Si no (confirmacion de email activa), mostramos el paso de confirmacion.
+    /* Si hay sesion activa, redirigir al onboarding para que el usuario
+       configure su perfil antes de acceder al dashboard */
     if (data.session) {
-      navigate('/dashboard', { replace: true });
+      navigate('/onboarding', { replace: true });
     } else {
       setStep('confirm-email');
     }

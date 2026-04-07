@@ -1,0 +1,21 @@
+.page { min-height: 100vh; background: var(--color-bg); display: flex; align-items: center; justify-content: center; padding: var(--space-8) var(--space-4); }
+.card { width: 100%; max-width: 540px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-10); display: flex; flex-direction: column; gap: var(--space-8); }
+.progress { display: flex; align-items: center; }
+.progressStep { display: flex; align-items: center; flex: 1; }
+.progressStep:last-child { flex: 0; }
+.progressDot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-border); flex-shrink: 0; transition: background var(--transition-normal); }
+.progressDotActive { background: var(--color-accent); box-shadow: 0 0 8px var(--color-accent-glow); }
+.progressLine { flex: 1; height: 2px; background: var(--color-border); transition: background var(--transition-normal); }
+.progressLineActive { background: var(--color-accent); }
+.stepContent { display: flex; flex-direction: column; gap: var(--space-6); }
+.stepHeader { display: flex; flex-direction: column; gap: var(--space-2); }
+.stepCount { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.08em; }
+.stepTitle { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.stepSubtitle { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+.optionsGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-2); }
+.optionsCol { display: flex; flex-direction: column; gap: var(--space-2); }
+.option { padding: var(--space-3) var(--space-4); background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--color-text-muted); text-align: left; transition: all var(--transition-fast); cursor: pointer; }
+.option:hover { border-color: var(--color-border-hover); color: var(--color-text); }
+.optionActive { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+.optionWide { width: 100%; }
+.stepActions { display: flex; justify-content: flex-end; gap: var(--space-3); }

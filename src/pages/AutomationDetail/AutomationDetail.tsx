@@ -1,8 +1,8 @@
 /**
  * Pagina de detalle y ejecucion de una automatizacion.
  * Incluye:
- *   - Demo de ejecucion via Groq
- *   - Formulario de solicitud de implementacion a medida
+ * - Demo de ejecucion via Groq (con limite de 500 chars y boton copiar)
+ * - Formulario de solicitud de implementacion a medida (con validacion de email)
  */
 import { useState, type FormEvent } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { getAutomationById }   from '@/services/automations';
 import { useAutomation }       from '@/hooks/useAutomation';
 import { useAuthContext }      from '@/context/AuthContext';
 import { supabase }            from '@/services/supabase';
+import { useToast }            from '@/context/ToastContext'; // Añadido para notificaciones
 import { Button }              from '@/components/ui/Button/Button';
 import { Textarea }            from '@/components/ui/Textarea/Textarea';
 import { Input }               from '@/components/ui/Input/Input';
@@ -25,17 +26,38 @@ interface DemoSectionProps {
 
 function DemoSection({ promptKey }: DemoSectionProps) {
   const { result, loading, error, execute, reset } = useAutomation();
+  const { showToast } = useToast();
   const [input, setInput] = useState('');
+
+  // Limite de 500 caracteres
+  const MAX_CHARS = 500;
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!input.trim()) return;
+    
+    if (input.length > MAX_CHARS) {
+      showToast(`El texto no puede superar los ${MAX_CHARS} caracteres`, 'warning');
+      return;
+    }
+
     await execute(promptKey, input);
   }
 
   function handleReset() {
     reset();
     setInput('');
+  }
+
+  // Funcionalidad de copiar al portapapeles
+  async function handleCopyResult() {
+    if (!result?.text) return;
+    try {
+      await navigator.clipboard.writeText(result.text);
+      showToast('Resultado copiado al portapapeles', 'info');
+    } catch (err) {
+      showToast('Error al copiar el texto', 'error');
+    }
   }
 
   return (
@@ -45,16 +67,23 @@ function DemoSection({ promptKey }: DemoSectionProps) {
       </div>
       <div className={styles.layout}>
         <form onSubmit={handleSubmit} className={styles.form} noValidate>
-          <Textarea
-            label="Describe tu caso o introduce el contenido a procesar"
-            placeholder="Escribe aqui el contexto que necesita esta automatizacion..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={8}
-            required
-          />
+          <div className={styles.textareaWrapper}>
+            <Textarea
+              label={`Describe tu caso (Max ${MAX_CHARS} caracteres)`}
+              placeholder="Escribe aqui el contexto que necesita esta automatizacion..."
+              value={input}
+              onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))} // Bloquea al llegar a 500
+              rows={8}
+              required
+            />
+            {/* Contador de caracteres */}
+            <div style={{ textAlign: 'right', fontSize: '0.8rem', color: input.length >= MAX_CHARS ? 'red' : 'gray', marginTop: '0.25rem' }}>
+              {input.length}/{MAX_CHARS}
+            </div>
+          </div>
+
           <div className={styles.formActions}>
-            <Button type="submit" loading={loading} disabled={!input.trim()}>
+            <Button type="submit" loading={loading} disabled={!input.trim() || input.length > MAX_CHARS}>
               Ejecutar demo
             </Button>
             {(result || error) && (
@@ -77,9 +106,15 @@ function DemoSection({ promptKey }: DemoSectionProps) {
           )}
           {result && !loading && (
             <div className={styles.result}>
-              <div className={styles.resultMeta}>
-                <span>{result.tokens} tokens</span>
-                <span>{(result.durationMs / 1000).toFixed(1)}s</span>
+              <div className={styles.resultMeta} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <span>{result.tokens} tokens</span>
+                  <span style={{ marginLeft: '10px' }}>{(result.durationMs / 1000).toFixed(1)}s</span>
+                </div>
+                {/* Botón para copiar */}
+                <Button type="button" variant="ghost" onClick={handleCopyResult} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                  📋 Copiar
+                </Button>
               </div>
               <pre className={styles.resultText}>{result.text}</pre>
             </div>
@@ -106,6 +141,7 @@ interface RequestFormProps {
 
 function RequestForm({ automationId, automationName }: RequestFormProps) {
   const { user } = useAuthContext();
+  const { showToast } = useToast();
 
   const [step,     setStep]    = useState<RequestStep>('form');
   const [saving,   setSaving]  = useState(false);
@@ -116,9 +152,21 @@ function RequestForm({ automationId, automationName }: RequestFormProps) {
   const [company,  setCompany]  = useState(user?.company   ?? '');
   const [message,  setMessage]  = useState('');
 
+  // Validacion de email con Regex
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!fullName.trim() || !email.trim() || !message.trim()) return;
+    
+    if (!isValidEmail(email)) {
+      showToast('Por favor, introduce un email válido', 'error');
+      setError('Formato de email incorrecto');
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
@@ -136,8 +184,10 @@ function RequestForm({ automationId, automationName }: RequestFormProps) {
 
     if (err) {
       setError('No se pudo enviar la solicitud. Intentalo de nuevo.');
+      showToast('Fallo al enviar la solicitud', 'error');
     } else {
       setStep('success');
+      showToast('Solicitud enviada correctamente', 'success');
     }
   }
 
@@ -182,6 +232,7 @@ function RequestForm({ automationId, automationName }: RequestFormProps) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@empresa.com"
             required
+            aria-invalid={error?.includes('email') ? 'true' : 'false'}
           />
         </div>
         <Input

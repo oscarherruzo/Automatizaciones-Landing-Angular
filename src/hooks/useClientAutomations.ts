@@ -5,7 +5,8 @@
  */
 import { useEffect, useState } from 'react';
 import { supabase } from '@/services/supabase';
-import { getAutomationById, type Automation } from '@/services/automations';
+import { getAutomationById } from '@/services/automations';
+import type { Automation }   from '@/types';
 
 export type AutomationStatus = 'active' | 'paused' | 'completed';
 

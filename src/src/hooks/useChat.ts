@@ -1,3 +1,7 @@
+/**
+ * Hook que gestiona el historial de mensajes y las llamadas al chat general Groq.
+ * send() devuelve el ChatMessage del asistente para que useChatHistory lo persista.
+ */
 import { useState, useCallback } from 'react';
 import { sendChatMessage } from '@/services/groq';
 import type { ChatMessage } from '@/types';
@@ -22,25 +26,45 @@ export function useChat(): ChatState {
 
   const send = useCallback(async (content: string): Promise<ChatMessage | null> => {
     if (!content.trim()) return null;
-    const userMsg: ChatMessage = { id: generateId(), role: 'user', content: content.trim(), timestamp: new Date() };
+
+    const userMsg: ChatMessage = {
+      id:        generateId(),
+      role:      'user',
+      content:   content.trim(),
+      timestamp: new Date(),
+    };
+
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
     setError(null);
+
     try {
       const history = [...messages, userMsg].map(({ role, content: c }) => ({ role, content: c }));
       const { text, tokens } = await sendChatMessage(history);
-      const assistantMsg: ChatMessage = { id: generateId(), role: 'assistant', content: text, timestamp: new Date(), tokens };
+
+      const assistantMsg: ChatMessage = {
+        id:        generateId(),
+        role:      'assistant',
+        content:   text,
+        timestamp: new Date(),
+        tokens,
+      };
+
       setMessages((prev) => [...prev, assistantMsg]);
       return assistantMsg;
     } catch (err) {
-      setError(`Error al enviar el mensaje: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+      const message = err instanceof Error ? err.message : 'Error desconocido';
+      setError(`Error al enviar el mensaje: ${message}`);
       return null;
     } finally {
       setLoading(false);
     }
   }, [messages]);
 
-  const clear = useCallback(() => { setMessages([]); setError(null); }, []);
+  const clear = useCallback(() => {
+    setMessages([]);
+    setError(null);
+  }, []);
 
   return { messages, loading, error, send, clear, setMessages };
 }

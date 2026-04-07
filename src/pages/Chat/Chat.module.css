@@ -34,7 +34,15 @@
 .messageUser      { background: var(--color-surface-2); align-self: flex-end; max-width: 80%; }
 .messageAssistant { background: var(--color-surface);   align-self: flex-start; max-width: 90%; }
 
+/* Cabecera del mensaje: rol + hora */
+.messageHeader {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-3);
+}
 .messageRole { font-size: var(--text-xs); color: var(--color-text-faint); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.messageTime { font-size: var(--text-xs); color: var(--color-text-faint); font-family: var(--font-mono); }
 
 /* Texto preformateado: previene XSS al no parsear HTML */
 .messageContent {
@@ -75,3 +83,5 @@
 }
 .inputField::placeholder { color: var(--color-text-faint); }
 .inputField:focus        { border-color: var(--color-accent); }
+
+.histLoading { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--color-text-muted); }

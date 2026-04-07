@@ -1,11 +1,12 @@
 /**
  * Catalogo de automatizaciones disponibles.
- * Permite filtrar por categoria y muestra tarjetas enlazadas al detalle.
+ * Permite filtrar por categoria y buscar por texto.
+ * Muestra empty state cuando no hay resultados.
  */
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AUTOMATIONS } from '@/services/automations';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { useState }        from 'react';
+import { Link }            from 'react-router-dom';
+import { AUTOMATIONS }     from '@/services/automations';
+import { Badge }           from '@/components/ui/Badge/Badge';
 import type { AutomationCategory } from '@/types';
 import styles from './Catalog.module.css';
 
@@ -27,10 +28,18 @@ const COMPLEXITY_BADGE: Record<string, 'success' | 'warning' | 'error'> = {
 
 export function Catalog() {
   const [activeCategory, setActiveCategory] = useState<AutomationCategory | 'todas'>('todas');
+  const [search, setSearch] = useState('');
 
-  const filtered = activeCategory === 'todas'
-    ? AUTOMATIONS
-    : AUTOMATIONS.filter((a) => a.category === activeCategory);
+  const term = search.trim().toLowerCase();
+
+  const filtered = AUTOMATIONS
+    .filter((a) => activeCategory === 'todas' || a.category === activeCategory)
+    .filter((a) =>
+      !term ||
+      a.title.toLowerCase().includes(term)   ||
+      a.summary.toLowerCase().includes(term) ||
+      a.benefits.some((b) => b.toLowerCase().includes(term))
+    );
 
   return (
     <div className={styles.page}>
@@ -40,6 +49,18 @@ export function Catalog() {
           {AUTOMATIONS.length} soluciones listas para implementar en tu empresa.
         </p>
       </header>
+
+      {/* Barra de busqueda por texto */}
+      <div className={styles.searchRow}>
+        <input
+          type="search"
+          className={styles.searchInput}
+          placeholder="Buscar por nombre o beneficio..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Buscar automatizaciones"
+        />
+      </div>
 
       {/* Filtros por categoria */}
       <div className={styles.filters} role="group" aria-label="Filtrar por categoria">
@@ -56,6 +77,23 @@ export function Catalog() {
           </button>
         ))}
       </div>
+
+      {/* Empty state cuando no hay resultados */}
+      {filtered.length === 0 && (
+        <div className={styles.emptyState}>
+          <p className={styles.emptyText}>
+            {term
+              ? `Sin resultados para "${search}".`
+              : 'No hay automatizaciones en esta categoria.'}
+          </p>
+          <button
+            className={styles.emptyAction}
+            onClick={() => { setSearch(''); setActiveCategory('todas'); }}
+          >
+            Ver todas las automatizaciones
+          </button>
+        </div>
+      )}
 
       {/* Grid de automatizaciones */}
       <div className={styles.grid}>
