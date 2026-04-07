@@ -1,0 +1,63 @@
+.button {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--space-2);
+  font-family:     var(--font-body);
+  font-weight:     500;
+  border-radius:   var(--radius-md);
+  transition:      background var(--transition-fast), color var(--transition-fast),
+                   border-color var(--transition-fast), opacity var(--transition-fast);
+  white-space:     nowrap;
+  letter-spacing:  0.01em;
+}
+
+/* Variantes */
+.primary {
+  background: var(--color-accent);
+  color:      #09090c;
+  border:     1px solid transparent;
+}
+.primary:hover:not(:disabled)  { opacity: 0.88; }
+
+.secondary {
+  background:   transparent;
+  color:        var(--color-text);
+  border:       1px solid var(--color-border);
+}
+.secondary:hover:not(:disabled) { border-color: var(--color-border-hover); background: var(--color-surface-2); }
+
+.ghost {
+  background:  transparent;
+  color:       var(--color-text-muted);
+  border:      1px solid transparent;
+}
+.ghost:hover:not(:disabled) { color: var(--color-text); background: var(--color-surface-2); }
+
+.danger {
+  background: transparent;
+  color:      var(--color-error);
+  border:     1px solid var(--color-error);
+}
+.danger:hover:not(:disabled) { background: rgba(224, 92, 92, 0.1); }
+
+/* Tamanos */
+.sm  { padding: var(--space-1) var(--space-3); font-size: var(--text-sm);  height: 32px; }
+.md  { padding: var(--space-2) var(--space-5); font-size: var(--text-sm);  height: 40px; }
+.lg  { padding: var(--space-3) var(--space-6); font-size: var(--text-base); height: 48px; }
+
+.fullWidth { width: 100%; }
+
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Spinner de carga */
+.spinner {
+  display:       inline-block;
+  width:         16px;
+  height:        16px;
+  border:        2px solid rgba(0,0,0,0.25);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation:     spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

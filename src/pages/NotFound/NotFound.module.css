@@ -1,0 +1,6 @@
+.page  { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: var(--space-4); text-align: center; }
+.code  { font-family: var(--font-mono); font-size: var(--text-4xl); color: var(--color-text-faint); }
+.title { font-size: var(--text-2xl); font-weight: 700; }
+.text  { font-size: var(--text-sm); color: var(--color-text-muted); }
+.link  { font-size: var(--text-sm); color: var(--color-accent); margin-top: var(--space-2); }
+.link:hover { opacity: 0.75; }
