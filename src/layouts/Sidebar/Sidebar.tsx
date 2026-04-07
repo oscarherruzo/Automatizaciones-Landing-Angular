@@ -1,7 +1,7 @@
 /**
  * Sidebar del panel de control.
  * Renderiza la navegacion principal con estado activo basado en la ruta actual.
- * El enlace de admin solo se renderiza si el usuario tiene rol 'admin'.
+ * El enlace de admin solo se renderiza si el usuario tiene rol 'superadmin'.
  */
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/AuthContext';
@@ -12,7 +12,7 @@ interface NavItem {
   path:  string;
   label: string;
   /** Restriccion de rol. undefined = accesible para todos */
-  role?: 'admin';
+  role?: 'superadmin';
 }
 
 /** Definicion de items de navegacion. Sin emojis: se usan indicadores geometricos. */
@@ -21,7 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/catalog',            label: 'Catalogo' },
   { path: '/chat',               label: 'Asistente' },
   { path: '/settings',           label: 'Ajustes' },
-  { path: '/admin',              label: 'Administracion', role: 'admin' },
+  { path: '/admin',              label: 'Administracion', role: 'superadmin' },
 ];
 
 export function Sidebar() {

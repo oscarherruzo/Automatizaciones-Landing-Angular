@@ -1,0 +1,80 @@
+.page {
+  min-height:      100vh;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      var(--color-bg);
+  padding:         var(--space-8) var(--space-4);
+}
+
+.card {
+  width:          100%;
+  max-width:      480px;
+  background:     var(--color-surface);
+  border:         1px solid var(--color-border);
+  border-radius:  var(--radius-xl);
+  padding:        var(--space-10);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-8);
+}
+
+.header      { text-align: center; }
+.title {
+  font-family:    var(--font-display);
+  font-size:      var(--text-2xl);
+  font-weight:    700;
+  color:          var(--color-text);
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  margin-top:     var(--space-1);
+  font-size:      var(--text-sm);
+  color:          var(--color-accent);
+  font-family:    var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.form { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.row {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--space-4);
+}
+@media (max-width: 480px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+.error {
+  font-size:  var(--text-sm);
+  color:      var(--color-error);
+  text-align: center;
+}
+
+/* Login prompt */
+.loginPrompt { font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; }
+.loginLink   { color: var(--color-accent); transition: opacity var(--transition-fast); }
+.loginLink:hover { opacity: 0.75; }
+
+/* Confirm email step */
+.confirmBody {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-4);
+}
+.confirmText {
+  font-size:   var(--text-sm);
+  color:       var(--color-text-muted);
+  line-height: 1.6;
+}
+.highlight   { color: var(--color-text); }
+.confirmNote { font-size: var(--text-xs); color: var(--color-text-faint); }
+.backLink {
+  font-size:  var(--text-sm);
+  color:      var(--color-accent);
+  text-align: center;
+  transition: opacity var(--transition-fast);
+}
+.backLink:hover { opacity: 0.75; }
