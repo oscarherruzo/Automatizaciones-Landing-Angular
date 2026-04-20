@@ -20,14 +20,20 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
     if (!user) { setLoading(false); return; }
 
     async function check() {
-      const { data } = await supabase
-        .from('onboarding_data')
-        .select('completed')
-        .eq('user_id', user!.id)
-        .maybeSingle();
+      try {
+        const { data } = await supabase
+          .from('onboarding_data')
+          .select('completed')
+          .eq('user_id', user!.id)
+          .maybeSingle();
 
-      setCompleted(data?.completed === true);
-      setLoading(false);
+        setCompleted(data?.completed === true);
+      } catch {
+        // Si la tabla no existe o hay error de red, tratamos como no completado
+        setCompleted(false);
+      } finally {
+        setLoading(false);
+      }
     }
 
     void check();
